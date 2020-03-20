@@ -1,27 +1,54 @@
 import { createChart } from "lightweight-charts";
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import useSWR from 'swr';
+
+const API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations/403";
+
+function fetcher(url) {
+  return fetch(url).then(r => r.json());
+}
 
 function App() {
+  const chartRef = useRef(null);
+  const [stats, setStats] = useState(null);
+
+  const { data, error } = useSWR(API, fetcher);
+
+  const mapChartTimeLine = data => {
+    const timeline = [];
+    Object.keys(data).forEach((v, key) => {
+      timeline.push({
+        time: v,
+        value: data[v]
+      });
+    });
+    return timeline
+  };
+
   useEffect(() => {
-    const chart = createChart(document.body, { width: 400, height: 300 });
-    const lineSeries = chart.addLineSeries();
-    lineSeries.setData([
-        { time: '2019-04-11', value: 80.01 },
-        { time: '2019-04-12', value: 96.63 },
-        { time: '2019-04-13', value: 76.64 },
-        { time: '2019-04-14', value: 81.89 },
-        { time: '2019-04-15', value: 74.43 },
-        { time: '2019-04-16', value: 80.01 },
-        { time: '2019-04-17', value: 96.63 },
-        { time: '2019-04-18', value: 76.64 },
-        { time: '2019-04-19', value: 81.89 },
-        { time: '2019-04-20', value: 74.43 },
-    ]);
-  }, []);
+    setStats(data);
+  }, [data]);
+
+  useEffect(() => {
+
+    if (chartRef.current && stats) {
+      const { timelines, province } = stats.location;
+
+      const chart = createChart(chartRef.current, { width: 1000, height: 500 });
+
+      const confirmedLine = chart.addLineSeries({ color: "orange", title: 'Confirmed' });
+      confirmedLine.setData(mapChartTimeLine(timelines.confirmed.timeline));
+
+      const deathsLine = chart.addLineSeries({ color: "red", title: 'Deaths' });
+      deathsLine.setData(mapChartTimeLine(timelines.deaths.timeline));
+
+      const recoveredLine = chart.addLineSeries({ color: "green", title: 'Recovered' });
+      recoveredLine.setData(mapChartTimeLine(timelines.recovered.timeline));
+    }
+  }, [stats]);
 
   return (
-    <>
-    </>
+    <div ref={chartRef}></div>
   );
 }
 
