@@ -6,8 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { mapChartTimeLine } from "./utils/ChartHelper";
 import _ from "lodash";
-
-const LOCATION_API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
+import { LOCATION_API } from "./api/Endpoints";
 
 function App() {
   const [chart, setChart] = useState(null);
@@ -15,8 +14,8 @@ function App() {
   const [stats, setStats] = useState(null);
   const [currCountry, setCurrCountry] = useState(403);
   const [countries, setCountries] = useState([]);
-  const [lines, setLines] = useState({});
-  const [mode, setMode] = useState(1);
+  const [lines] = useState({});
+  const [mode, setMode] = useState(4);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -33,17 +32,19 @@ function App() {
     fetch(LOCATION_API).then(res => res.json().then(res => setCountries(res.locations)));
   }, []);
 
+  //* When mode (log / scale) is changed we update the chart scale
+  //* 1 = logarithm, 4 = normal
   useEffect(() => {
     if (chart) {
       chart.applyOptions({
         priceScale: {
-          mode: mode,
-          invertScale: false
+          mode: mode
         }
       });
     }
   }, [mode]);
 
+  //* Fetch the country timeline for selection and update stats
   useEffect(() => {
     !_.isEmpty(lines["confirmed"]) && chart.removeSeries(lines["confirmed"]);
     !_.isEmpty(lines["deaths"]) && chart.removeSeries(lines["deaths"]);
@@ -64,6 +65,8 @@ function App() {
 
       lines["recovered"] = chart.addLineSeries({ color: "green", title: 'Recovered' });
       lines["recovered"].setData(mapChartTimeLine(timelines.recovered.timeline));
+
+      chart.timeScale().fitContent();
     };
   }, [stats]);
 
@@ -87,7 +90,7 @@ function App() {
         <Select
           native
           value={mode}
-          onChange={e => setMode(e.target.value)}
+          onChange={e => setMode(parseInt(e.target.value))}
           inputProps={{
             name: 'Scale',
             id: 'scale-native-simple',
