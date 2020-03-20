@@ -1,8 +1,10 @@
 import { createChart } from "lightweight-charts";
 import React, { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
+import Select from '@material-ui/core/Select';
 
 const API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations/403";
+const LOCATION_API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
 
 function fetcher(url) {
   return fetch(url).then(r => r.json());
@@ -11,8 +13,14 @@ function fetcher(url) {
 function App() {
   const chartRef = useRef(null);
   const [stats, setStats] = useState(null);
+  const [country, setCountry] = useState("gb");
 
   const { data, error } = useSWR(API, fetcher);
+  // const { locations, error2 } = useSWR(LOCATION_API, fetcher);
+
+  fetch(LOCATION_API).then(res => res.json().then(res => console.log(res)));
+
+  // console.log(locations);
 
   const mapChartTimeLine = data => {
     const timeline = [];
@@ -30,7 +38,6 @@ function App() {
   }, [data]);
 
   useEffect(() => {
-
     if (chartRef.current && stats) {
       const { timelines, province } = stats.location;
 
@@ -48,7 +55,23 @@ function App() {
   }, [stats]);
 
   return (
+    <>
+        <Select
+          native
+          value={1}
+          onChange={null}
+          inputProps={{
+            name: 'age',
+            id: 'age-native-simple',
+          }}
+        >
+          <option aria-label="None" value="" />
+          <option value={10}>Ten</option>
+          <option value={20}>Twenty</option>
+          <option value={30}>Thirty</option>
+        </Select>
     <div ref={chartRef}></div>
+    </>
   );
 }
 
