@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     if (chartRef.current) {
       const createdChart = createChart(chartRef.current, {
-        width: window.innerWidth,
+        width: window.innerWidth / 2,
         height: 500,
         priceScale: {
           mode: mode,
@@ -83,7 +83,6 @@ function App() {
             id: 'country-native-simple',
           }}
         >
-          <option aria-label="None" value="" />
           {_.isEmpty(countries) ? null : <Countrys countries={countries} />}
         </Select>
 
@@ -96,10 +95,11 @@ function App() {
             id: 'scale-native-simple',
           }}
         >
-          <option value={4} key={"scalar"}>Scalar</option>
+          <option value={4} key={"Linear"}>Linear</option>
           <option value={1} key={"Logarithm"}>Logarithm</option>
         </Select>
       </FormControl>
+      <h2><u>Daily confirmed cases, deaths, recoveries</u></h2>
       <div ref={chartRef}></div>
     </>
   );
