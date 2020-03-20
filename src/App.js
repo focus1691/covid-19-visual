@@ -1,76 +1,103 @@
 import { createChart } from "lightweight-charts";
 import React, { useState, useEffect, useRef } from 'react';
-import useSWR from 'swr';
+import Countrys from "./components/countries/Countrys";
 import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import { mapChartTimeLine } from "./utils/ChartHelper";
+import _ from "lodash";
 
-const API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations/403";
 const LOCATION_API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
 
-function fetcher(url) {
-  return fetch(url).then(r => r.json());
-}
-
 function App() {
+  const [chart, setChart] = useState(null);
   const chartRef = useRef(null);
   const [stats, setStats] = useState(null);
-  const [country, setCountry] = useState("gb");
+  const [currCountry, setCurrCountry] = useState(403);
+  const [countries, setCountries] = useState([]);
+  const [lines, setLines] = useState({});
+  const [mode, setMode] = useState(1);
 
-  const { data, error } = useSWR(API, fetcher);
-  // const { locations, error2 } = useSWR(LOCATION_API, fetcher);
-
-  fetch(LOCATION_API).then(res => res.json().then(res => console.log(res)));
-
-  // console.log(locations);
-
-  const mapChartTimeLine = data => {
-    const timeline = [];
-    Object.keys(data).forEach((v, key) => {
-      timeline.push({
-        time: v,
-        value: data[v]
+  useEffect(() => {
+    if (chartRef.current) {
+      const createdChart = createChart(chartRef.current, {
+        width: window.innerWidth,
+        height: 500,
+        priceScale: {
+          mode: mode,
+          invertScale: false,
+        }
       });
-    });
-    return timeline
-  };
+      setChart(createdChart);
+    }
+    fetch(LOCATION_API).then(res => res.json().then(res => setCountries(res.locations)));
+  }, []);
 
   useEffect(() => {
-    setStats(data);
-  }, [data]);
+    if (chart) {
+      chart.applyOptions({
+        priceScale: {
+          mode: mode,
+          invertScale: false
+        }
+      });
+    }
+  }, [mode]);
 
   useEffect(() => {
-    if (chartRef.current && stats) {
+    !_.isEmpty(lines["confirmed"]) && chart.removeSeries(lines["confirmed"]);
+    !_.isEmpty(lines["deaths"]) && chart.removeSeries(lines["deaths"]);
+    !_.isEmpty(lines["recovered"]) && chart.removeSeries(lines["recovered"]);
+
+    fetch(`${LOCATION_API}/${currCountry}`).then(res => res.json()).then(res => setStats(res));
+  }, [currCountry]);
+
+  useEffect(() => {
+    if (chart && chartRef.current && stats) {
       const { timelines, province } = stats.location;
 
-      const chart = createChart(chartRef.current, { width: 1000, height: 500 });
+      lines["confirmed"] = chart.addLineSeries({ color: "orange", title: 'Confirmed' });
+      lines["confirmed"].setData(mapChartTimeLine(timelines.confirmed.timeline));
 
-      const confirmedLine = chart.addLineSeries({ color: "orange", title: 'Confirmed' });
-      confirmedLine.setData(mapChartTimeLine(timelines.confirmed.timeline));
+      lines["deaths"] = chart.addLineSeries({ color: "red", title: 'Deaths' });
+      lines["deaths"].setData(mapChartTimeLine(timelines.deaths.timeline));
 
-      const deathsLine = chart.addLineSeries({ color: "red", title: 'Deaths' });
-      deathsLine.setData(mapChartTimeLine(timelines.deaths.timeline));
-
-      const recoveredLine = chart.addLineSeries({ color: "green", title: 'Recovered' });
-      recoveredLine.setData(mapChartTimeLine(timelines.recovered.timeline));
-    }
+      lines["recovered"] = chart.addLineSeries({ color: "green", title: 'Recovered' });
+      lines["recovered"].setData(mapChartTimeLine(timelines.recovered.timeline));
+    };
   }, [stats]);
 
   return (
     <>
+      <FormControl>
+        <InputLabel id="country-select-label">Country</InputLabel>
         <Select
           native
-          value={1}
-          onChange={null}
+          value={currCountry}
+          onChange={e => setCurrCountry(e.target.value)}
           inputProps={{
-            name: 'age',
-            id: 'age-native-simple',
+            name: 'Country',
+            id: 'country-native-simple',
           }}
         >
           <option aria-label="None" value="" />
-          <option value={10}>Ten</option>
-          <option value={20}>Twenty</option>
-          <option value={30}>Thirty</option>
+          {_.isEmpty(countries) ? null : <Countrys countries={countries} />}
         </Select>
-    <div ref={chartRef}></div>
+
+        <Select
+          native
+          value={mode}
+          onChange={e => setMode(e.target.value)}
+          inputProps={{
+            name: 'Scale',
+            id: 'scale-native-simple',
+          }}
+        >
+          <option value={4} key={"scalar"}>Scalar</option>
+          <option value={1} key={"Logarithm"}>Logarithm</option>
+        </Select>
+      </FormControl>
+      <div ref={chartRef}></div>
     </>
   );
 }
