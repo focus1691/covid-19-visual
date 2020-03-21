@@ -12,20 +12,19 @@ import { chartStyle } from "../../assets/mui/Chart";
 
 const useStyles = makeStyles(theme => ({ ...chartStyle }));
 
-const ThreeFactorChart = () => {
+const ThreeFactorChart = ({ countries }) => {
 	const classes = useStyles();
 	const [chart, setChart] = useState(null);
 	const chartRef = useRef(null);
 	const [stats, setStats] = useState(null);
 	const [currCountry, setCurrCountry] = useState(403);
-	const [countries, setCountries] = useState([]);
 	const [lines] = useState({});
 	const [mode, setMode] = useState(4);
 
 	useEffect(() => {
 		if (chartRef.current) {
 			const createdChart = createChart(chartRef.current, {
-				width: window.innerWidth / 2,
+				width: window.innerWidth / 1.5,
 				height: 500,
 				priceScale: {
 					mode: mode,
@@ -34,7 +33,6 @@ const ThreeFactorChart = () => {
 			});
 			setChart(createdChart);
 		}
-		fetch(LOCATION_API).then(res => res.json().then(res => setCountries(res.locations)));
 	}, []);
 
 	//* When mode (log / scale) is changed we update the chart scale
@@ -68,7 +66,7 @@ const ThreeFactorChart = () => {
 			lines["deaths"] = chart.addLineSeries({ color: "red", title: 'Deaths' });
 			lines["deaths"].setData(mapChartTimeLine(timelines.deaths.timeline));
 
-			lines["recovered"] = chart.addLineSeries({ color: "green", title: 'Recovered' });
+			lines["recovered"] = chart.addLineSeries({ color: "#61ce5d", title: 'Recovered' });
 			lines["recovered"].setData(mapChartTimeLine(timelines.recovered.timeline));
 
 			chart.timeScale().fitContent();
@@ -76,7 +74,7 @@ const ThreeFactorChart = () => {
 	}, [stats]);
 
 	return (
-		<>
+		<div className="chart-container">
 			<FormControl className={classes.formControl}>
 				<InputLabel id="country-select-label">Country</InputLabel>
 				<Select
@@ -110,10 +108,9 @@ const ThreeFactorChart = () => {
 					<option value={1} key={"Logarithm"}>Logarithm</option>
 				</Select>
 			</FormControl>
-
 			<h2><u>Daily confirmed cases, deaths, recoveries</u></h2>
-			<div ref={chartRef}></div>
-		</>
+			<div ref={chartRef} className="chart" />
+		</div>
 	);
 };
 

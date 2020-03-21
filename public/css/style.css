@@ -1,3 +1,16 @@
 * {
 	font-family: 'Roboto', sans-serif;
 }
+
+body {
+	background: #c4e5ff
+}
+
+.chart-container {
+	text-align: center
+}
+
+.chart {
+	display: inline-block;
+}
+
