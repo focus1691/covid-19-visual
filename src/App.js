@@ -1,5 +1,5 @@
 import React from 'react';
-import ThreeFactorChart from "./charts/ThreeFactorChart";
+import ThreeFactorChart from "./components/charts/ThreeFactorChart";
 
 function App() {
 

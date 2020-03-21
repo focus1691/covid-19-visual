@@ -1,14 +1,14 @@
 import { createChart } from "lightweight-charts";
 import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Countrys from "../components/countries/Countrys";
+import Countrys from "../countries/Countrys";
 import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import { mapChartTimeLine } from "../utils/ChartHelper";
+import { mapChartTimeLine } from "../../utils/ChartHelper";
 import _ from "lodash";
-import { LOCATION_API } from "../api/Endpoints";
-import { chartStyle } from "../assets/mui/Chart";
+import { LOCATION_API } from "../../api/Endpoints";
+import { chartStyle } from "../../assets/mui/Chart";
 
 const useStyles = makeStyles(theme => ({ ...chartStyle }));
 
