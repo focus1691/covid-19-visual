@@ -3,14 +3,17 @@
 }
 
 body {
-	background: #c4e5ff
+	background: #e9d5ff;
+}
+
+h3 {
+	color: #111725;
 }
 
 .chart-container {
-	text-align: center
+	text-align: center;
 }
 
 .chart {
 	display: inline-block;
 }
-

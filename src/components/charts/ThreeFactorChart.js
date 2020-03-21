@@ -10,7 +10,7 @@ import _ from "lodash";
 import { LOCATION_API } from "../../api/Endpoints";
 import { chartStyle } from "../../assets/mui/Chart";
 
-const useStyles = makeStyles(theme => ({ ...chartStyle }));
+const useStyles = makeStyles(theme => ({ ...chartStyle(theme) }));
 
 const ThreeFactorChart = ({ countries }) => {
 	const classes = useStyles();
@@ -75,6 +75,8 @@ const ThreeFactorChart = ({ countries }) => {
 
 	return (
 		<div className="chart-container">
+			<h3>Daily confirmed cases, deaths, recoveries</h3>
+			<div class="chart-container" style={{position: "relative", height: "40vh", width: "80vw", display: "inline-block" }}>
 			<FormControl className={classes.formControl}>
 				<InputLabel id="country-select-label">Country</InputLabel>
 				<Select
@@ -90,14 +92,12 @@ const ThreeFactorChart = ({ countries }) => {
 					{_.isEmpty(countries) ? null : <Countrys countries={countries} />}
 				</Select>
 			</FormControl>
-
 			<FormControl className={classes.formControl}>
 				<InputLabel id="scale-select-label">Scale</InputLabel>
 				<Select
 					native
 					className={classes.select}
 					value={mode}
-					style={{ float: "left" }}
 					onChange={e => setMode(parseInt(e.target.value))}
 					inputProps={{
 						name: 'Scale',
@@ -108,8 +108,8 @@ const ThreeFactorChart = ({ countries }) => {
 					<option value={1} key={"Logarithm"}>Logarithm</option>
 				</Select>
 			</FormControl>
-			<h2><u>Daily confirmed cases, deaths, recoveries</u></h2>
 			<div ref={chartRef} className="chart" />
+			</div>
 		</div>
 	);
 };

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ThreeFactorChart from "./components/charts/ThreeFactorChart";
-import Histogram from "./components/charts/Hisogram";
+import Histogram from "./components/charts/Histogram";
 import { LOCATION_API } from "./api/Endpoints";
 
 function App() {
-
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
@@ -14,7 +13,7 @@ function App() {
   return (
     <>
       <ThreeFactorChart countries={countries} />
-      <Histogram />
+      <Histogram countries={countries} />
     </>
   )
 }
