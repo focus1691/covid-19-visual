@@ -23,6 +23,8 @@ const Histogram = ({ countries }) => {
 				labels: getCountryLabels(filteredCountries),
 				datasets: [
 					{
+						label: "Countries / Provinces",
+						backgroundColor: '#31db2e',
 						data: getCountryData(filteredCountries, category)
 					}
 				]
@@ -36,9 +38,7 @@ const Histogram = ({ countries }) => {
 
 	return (
 		<div className="chart-container">
-			<h3>
-				Compare the infected countries / provinces for daily confirmed cases, deaths, recoveries
-			</h3>
+			<h3>Compare the infected countries / provinces for daily confirmed cases, deaths, recoveries</h3>
 			<div class="chart-container" style={{ position: "relative", height: "70vh", width: "80vw", display: "inline-block" }}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="category-select-label">Category</InputLabel>
@@ -74,13 +74,61 @@ const Histogram = ({ countries }) => {
 							name: "Limit",
 							id: "limit-native-simple"
 						}}>
-						<option value={10} key="10">10</option>
-						<option value={25} key="25">25</option>
-						<option value={35} key="35">35</option>
-						<option value={50} key="50">50</option>
+						<option value={10} key="10">
+							10
+						</option>
+						<option value={25} key="25">
+							25
+						</option>
+						<option value={35} key="35">
+							35
+						</option>
+						<option value={50} key="50">
+							50
+						</option>
 					</Select>
 				</FormControl>
-				{_.isEmpty(data) ? null : <HorizontalBar data={data} width={100} height={50} options={{ maintainAspectRatio: false }}></HorizontalBar>}
+				{_.isEmpty(data) ? null : (
+					<HorizontalBar
+						data={data}
+						className="horizontal-bar"
+						width={100}
+						height={50}
+						options={{
+							maintainAspectRatio: false,
+							scales: {
+								yAxes: [
+									{
+										ticks: {
+											min: 0,
+											stepSize: 1,
+											fontColor: "#fff",
+											fontSize: 14
+										},
+										gridLines: {
+											color: "#fff",
+											lineWidth: 1,
+											zeroLineColor: "#fff",
+											zeroLineWidth: 1
+										},
+										stacked: true
+									}
+								],
+								xAxes: [
+									{
+										ticks: {
+											fontColor: "#fff",
+											fontSize: 14
+										},
+										gridLines: {
+											color: "#fff",
+											lineWidth: 1
+										}
+									}
+								]
+							}
+						}}></HorizontalBar>
+				)}
 			</div>
 		</div>
 	);

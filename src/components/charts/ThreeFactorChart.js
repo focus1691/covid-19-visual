@@ -17,7 +17,7 @@ const ThreeFactorChart = ({ countries }) => {
 	const [chart, setChart] = useState(null);
 	const chartRef = useRef(null);
 	const [stats, setStats] = useState(null);
-	const [currCountry, setCurrCountry] = useState(403);
+	const [currCountry, setCurrCountry] = useState("");
 	const [lines] = useState({});
 	const [mode, setMode] = useState(4);
 
@@ -26,12 +26,17 @@ const ThreeFactorChart = ({ countries }) => {
 			const createdChart = createChart(chartRef.current, {
 				width: window.innerWidth / 1.5,
 				height: 500,
+				layout: {
+					fontSize: 12,
+					fontFamily: 'roboto',
+				},
 				priceScale: {
 					mode: mode,
 					invertScale: false,
 				}
 			});
 			setChart(createdChart);
+			setCurrCountry(403);
 		}
 	}, []);
 
@@ -60,13 +65,13 @@ const ThreeFactorChart = ({ countries }) => {
 		if (chart && chartRef.current && stats) {
 			const { timelines, province } = stats.location;
 
-			lines["confirmed"] = chart.addLineSeries({ color: "orange", title: 'Confirmed' });
+			lines["confirmed"] = chart.addLineSeries({ color: "#08a0da", title: 'Confirmed' });
 			lines["confirmed"].setData(mapChartTimeLine(timelines.confirmed.timeline));
 
-			lines["deaths"] = chart.addLineSeries({ color: "red", title: 'Deaths' });
+			lines["deaths"] = chart.addLineSeries({ color: "#ff1a1a", title: 'Deaths' });
 			lines["deaths"].setData(mapChartTimeLine(timelines.deaths.timeline));
 
-			lines["recovered"] = chart.addLineSeries({ color: "#61ce5d", title: 'Recovered' });
+			lines["recovered"] = chart.addLineSeries({ color: "#31db2e", title: 'Recovered' });
 			lines["recovered"].setData(mapChartTimeLine(timelines.recovered.timeline));
 
 			chart.timeScale().fitContent();

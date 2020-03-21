@@ -3,11 +3,11 @@
 }
 
 body {
-	background: #e9d5ff;
+	background: #1e1e21;
 }
 
 h3 {
-	color: #111725;
+	color: #ffffff;
 }
 
 .chart-container {
@@ -16,4 +16,9 @@ h3 {
 
 .chart {
 	display: inline-block;
+}
+
+.chartjs-render-monitor {
+	background: #000000;
+	margin: 10px;
 }
