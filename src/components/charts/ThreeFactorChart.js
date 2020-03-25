@@ -36,7 +36,7 @@ const ThreeFactorChart = ({ countries }) => {
 				}
 			});
 			setChart(createdChart);
-			setCurrCountry(223);
+			setCurrCountry("223");
 		}
 	}, []);
 
