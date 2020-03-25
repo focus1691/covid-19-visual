@@ -36,7 +36,7 @@ const ThreeFactorChart = ({ countries }) => {
 				}
 			});
 			setChart(createdChart);
-			setCurrCountry(403);
+			setCurrCountry(223);
 		}
 	}, []);
 
@@ -56,23 +56,18 @@ const ThreeFactorChart = ({ countries }) => {
 	useEffect(() => {
 		!_.isEmpty(lines["confirmed"]) && chart.removeSeries(lines["confirmed"]);
 		!_.isEmpty(lines["deaths"]) && chart.removeSeries(lines["deaths"]);
-		!_.isEmpty(lines["recovered"]) && chart.removeSeries(lines["recovered"]);
-
-		fetch(`${LOCATION_API}/${currCountry}`).then(res => res.json()).then(res => setStats(res));
+		if (!_.isEmpty(currCountry)) fetch(`${LOCATION_API}/${currCountry}`).then(res => res.json()).then(res => setStats(res));
 	}, [currCountry]);
 
 	useEffect(() => {
 		if (chart && chartRef.current && stats) {
-			const { timelines, province } = stats.location;
+			const { timelines } = stats.location;
 
 			lines["confirmed"] = chart.addLineSeries({ color: "#08a0da", title: 'Confirmed' });
 			lines["confirmed"].setData(mapChartTimeLine(timelines.confirmed.timeline));
 
 			lines["deaths"] = chart.addLineSeries({ color: "#ff1a1a", title: 'Deaths' });
 			lines["deaths"].setData(mapChartTimeLine(timelines.deaths.timeline));
-
-			lines["recovered"] = chart.addLineSeries({ color: "#31db2e", title: 'Recovered' });
-			lines["recovered"].setData(mapChartTimeLine(timelines.recovered.timeline));
 
 			chart.timeScale().fitContent();
 		};
@@ -81,7 +76,7 @@ const ThreeFactorChart = ({ countries }) => {
 	return (
 		<div className="chart-container">
 			<h3>Daily confirmed cases, deaths, recoveries</h3>
-			<div class="chart-container" style={{position: "relative", height: "40vh", width: "80vw", display: "inline-block" }}>
+			<div className="chart-container" style={{position: "relative", height: "40vh", width: "80vw", display: "inline-block" }}>
 			<FormControl className={classes.formControl}>
 				<InputLabel id="country-select-label">Country</InputLabel>
 				<Select

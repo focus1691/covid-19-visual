@@ -16,7 +16,7 @@ const Histogram = ({ countries }) => {
 	const [category, setCategory] = useState("confirmed");
 	const [limit, setLimit] = useState(25);
 
-	const updateChart = () => {
+	useEffect(() => {
 		if (!_.isEmpty(countries)) {
 			const filteredCountries = filterInfectedCountries(countries, category, limit);
 			setData({
@@ -30,16 +30,12 @@ const Histogram = ({ countries }) => {
 				]
 			});
 		}
-	};
-
-	useEffect(() => {
-		updateChart();
 	}, [countries, category, limit]);
 
 	return (
 		<div className="chart-container">
 			<h3>Compare the infected countries / provinces for daily confirmed cases, deaths, recoveries</h3>
-			<div class="chart-container" style={{ position: "relative", height: "70vh", width: "80vw", display: "inline-block" }}>
+			<div className="chart-container" style={{ position: "relative", height: "70vh", width: "80vw", display: "inline-block" }}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="category-select-label">Category</InputLabel>
 					<Select
