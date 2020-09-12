@@ -1,6 +1,6 @@
 # COVID-19 Charts
 
-[Demo](https://pensive-leavitt-a3a46c.netlify.com/)
+[Demo](https://coronavirus-chart.netlify.app)
 
 A line chart and a horizontal bar graph to visualise confirmed cases, deaths and recovered.
 
