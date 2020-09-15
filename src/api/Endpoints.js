@@ -1,1 +1,1 @@
-export const LOCATION_API = "https://coronavirus-tracker-api.herokuapp.com/v2/locations";
+export const LOCATION_API = "https://covid-tracker-us.herokuapp.com/v2/locations";
