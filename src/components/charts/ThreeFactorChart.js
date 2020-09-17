@@ -38,7 +38,7 @@ const ThreeFactorChart = ({ countries }) => {
 			setChart(createdChart);
 			setCurrCountry("223");
 		}
-	}, []);
+	}, [mode]);
 
 	//* When mode (log / scale) is changed we update the chart scale
 	//* 1 = logarithm, 4 = normal
@@ -50,14 +50,14 @@ const ThreeFactorChart = ({ countries }) => {
 				}
 			});
 		}
-	}, [mode]);
+	}, [chart, mode]);
 
 	//* Fetch the country timeline for selection and update stats
 	useEffect(() => {
 		!_.isEmpty(lines["confirmed"]) && chart.removeSeries(lines["confirmed"]);
 		!_.isEmpty(lines["deaths"]) && chart.removeSeries(lines["deaths"]);
 		if (!_.isEmpty(currCountry)) fetch(`${LOCATION_API}/${currCountry}`).then(res => res.json()).then(res => setStats(res));
-	}, [currCountry]);
+	}, [chart, currCountry, lines]);
 
 	useEffect(() => {
 		if (chart && chartRef.current && stats) {
@@ -71,7 +71,7 @@ const ThreeFactorChart = ({ countries }) => {
 
 			chart.timeScale().fitContent();
 		};
-	}, [stats]);
+	}, [chart, lines, stats]);
 
 	return (
 		<div className="chart-container">
